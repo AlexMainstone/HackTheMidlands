@@ -35,7 +35,7 @@ class SIR(object):
         return self.beta * self.I * self.S / self.N
     
     def rate_IR(self):
-        return self.gamma * self.I / self.N
+        return self.gamma * self.I
     
     def next_event(self):
         X = np.random.uniform(size=2)
@@ -52,25 +52,31 @@ class SIR(object):
             dt_IR = np.inf
         
         if dt_SI <= dt_IR:
-            if self.S != 0:
+            if self.S != 0 and self.I != 0:
                 self.event_S_I()
             self.T += dt_SI
-            
+
         else: 
             if self.I != 0:
                 self.event_I_R()
             self.T += dt_IR
-                
-        
 
-sir = SIR(100, 1, 0, beta=10, gamma=12)
+
+class graph(object):
+    
+    def __init__(self):
+        pass
+
+
+sir = SIR(490, 400, 0, beta=10, gamma=5)
 
 S = []
 I = []
 R = []
 T = []
 
-for _ in range(5000):
+E = []
+for _ in range(50000):
 
     (s,i,r,t) = sir.get_population()
     S.append(s)
@@ -79,10 +85,8 @@ for _ in range(5000):
     T.append(t)
     
 
-    sir.next_event()
-
+    event = sir.next_event()
     
-      
 plt.plot(T, S, c='g')
 plt.plot(T, I, c='r')
 plt.plot(T, R, c='k')
