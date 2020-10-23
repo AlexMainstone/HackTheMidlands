@@ -5,3 +5,4 @@
 - scipy
 - pyglet
 - matplotlib
+- sklearn
