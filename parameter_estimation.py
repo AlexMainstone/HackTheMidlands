@@ -7,19 +7,28 @@ Created on Fri Oct 23 03:35:28 2020
 """
 
 import numpy as np
-from sklearn.linear_model import Linear_Regression
-import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
 
-S = []
-I = []
-R = []
-
-T = []
-def estimate(T, I):
-    T = np.array(T).reshape(-1, 1)
-    I = [np.log(i) - np.log(I[0]) for i in I]
+def estimate(T, S, I, R):
     
-    regr = Linear_Regression(fit_intercept = False)
-    regr.fit(T, I)
-    return regr.coef_[0]
+    T = np.array(T).reshape(-1, 1)
+    log_I = [np.log(i) - np.log(I[0]) for i in I]
+    
+    regr0 = LinearRegression(fit_intercept = False)
+    regr0.fit(T, log_I)
+    
+    beta_gamma = regr0.coef_[0]
+    
+    log_ratio = [np.log(i/I[0]) for i in I]
+    
+    regr1 = LinearRegression(fit_intercept = False)
+    
+    regr1.fit(T, log_ratio)
+    
+    m_hat = regr1.coef_
+    
+    beta = (m_hat - beta_gamma) / (S[-1]/(S[-1] + I[-1] + R[-1]) - 1)
+    gamma = (m_hat - beta_gamma * S[-1]/(S[-1] + I[-1] + R[-1])) / (S[-1]/(S[-1] + I[-1] + R[-1]) - 1)
+    
+    return beta, gamma
 

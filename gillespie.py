@@ -7,6 +7,8 @@ This is a temporary script file.
 import numpy as np
 import matplotlib.pyplot as plt
 
+import parameter_estimation
+
 class SIR(object):
     
     def __init__(self, S, I, R, beta, gamma):
@@ -42,6 +44,7 @@ class SIR(object):
         
         r_SI = self.rate_SI()
         r_IR = self.rate_IR()
+        
         try:
             dt_SI = (-1/r_SI) * np.log(X[0])
         except:
@@ -50,6 +53,7 @@ class SIR(object):
             dt_IR = (-1/r_IR) * np.log(X[1])
         except:
             dt_IR = np.inf
+        
         
         if dt_SI <= dt_IR:
             if self.S != 0 and self.I != 0:
@@ -62,13 +66,9 @@ class SIR(object):
             self.T += dt_IR
 
 
-class graph(object):
-    
-    def __init__(self):
-        pass
+sir = SIR(1000, 40, 0, beta=100, gamma=5)
 
 
-sir = SIR(490, 400, 0, beta=10, gamma=5)
 
 S = []
 I = []
@@ -76,18 +76,22 @@ R = []
 T = []
 
 E = []
-for _ in range(50000):
-
+for _ in range(500):
+    
     (s,i,r,t) = sir.get_population()
     S.append(s)
     I.append(i)
     R.append(r)
     T.append(t)
     
-
     event = sir.next_event()
     
 plt.plot(T, S, c='g')
 plt.plot(T, I, c='r')
 plt.plot(T, R, c='k')
 plt.show()
+
+t = 500
+b, g = parameter_estimation.estimate(T[:t], S[:t], I[:t], R[:t])
+print("Beta", b)
+print("Gamma", g)
